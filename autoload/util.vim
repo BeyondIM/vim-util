@@ -86,9 +86,9 @@ endfunction
 " increase opacity {{{2
 function! s:server.increaseOpacity()
     if s:isWin && self.opacity < 255
-        let self.opacity = self.opacity+12.8>255 ? 255 : float2nr(self.opacity+12.8)
+        let self.opacity = self.opacity+5>255 ? 255 : (self.opacity+5)
     elseif s:isMac && self.opacity > 0
-        let self.opacity = self.opacity-5<0 ? 0 : (self.opacity-5)
+        let self.opacity = self.opacity-2<0 ? 0 : (self.opacity-2)
     endif
     call self.applyParams()
 endfunction
@@ -97,9 +97,9 @@ endfunction
 " decrease opacity {{{2
 function! s:server.decreaseOpacity()
     if s:isWin && self.opacity > 0
-        let self.opacity = self.opacity-12.8<0 ? 0 : float2nr(self.opacity-12.8)
+        let self.opacity = self.opacity-5<0 ? 0 : (self.opacity-5)
     elseif s:isMac && self.opacity < 100
-        let self.opacity = self.opacity+5>100 ? 100 : (self.opacity+5)
+        let self.opacity = self.opacity+2>100 ? 100 : (self.opacity+2)
     endif
     call self.applyParams()
 endfunction
@@ -250,7 +250,7 @@ endfunction
 
 " }}}1
 
-" vim-exterior function {{{1
+" Vim-util function {{{1
 
 if !exists('g:serverInfoFile')
     let g:serverInfoFile = expand($HOME . '/.vimdb/.serverinfo', 1)
@@ -258,6 +258,7 @@ endif
 
 let g:serverList = []
 
+" util#readParams {{{2
 function! util#readParams()
     let server = s:server.new(v:servername)
     call s:CheckFileReadable(g:serverInfoFile)
@@ -273,13 +274,21 @@ function! util#readParams()
         call server.applyParams()
     endfor
 endfunction
+" }}}2
 
+" util#writeParams {{{2
 function! util#writeParams()
     for server in g:serverList
+        let server.lines = &lines
+        let server.columns = &columns
+        let server.winposx = (getwinposx()<0 ? 0 : getwinposx())
+        let server.winposy = (getwinposy()<0 ? 0 : getwinposy())
         call server.saveToFile()
     endfor
 endfunction
+" }}}2
 
+" util#adjustColor {{{2
 function! util#adjustColor(color, direction)
     for server in g:serverList
         if a:color =='dark' && a:direction == '+'
@@ -296,7 +305,9 @@ function! util#adjustColor(color, direction)
         endif
     endfor
 endfunction
+" }}}2
 
+" util#adjustOpacity {{{2
 function! util#adjustOpacity(direction)
     for server in g:serverList
         let server.lines = &lines
@@ -310,7 +321,9 @@ function! util#adjustOpacity(direction)
         endif
     endfor
 endfunction
+" }}}2
 
+" util#toggleMaximize {{{2
 function! util#toggleMaximize()
     for server in g:serverList
         if !server.isMaximized
@@ -329,7 +342,9 @@ function! util#toggleMaximize()
         call server.applyParams()
     endfor
 endfunction
+" }}}2
 
+" util#adjustSize {{{2
 function! util#adjustSize()
     for server in g:serverList
         let server.lines = &lines
@@ -339,6 +354,11 @@ function! util#adjustSize()
         call server.applyParams()
     endfor
 endfunction
+" }}}2
+
+" }}}1
+
+" Key mapping {{{1
 
 nnoremap <silent> <C-F10> :<C-U>call util#adjustColor('dark', '+')<CR>
 nnoremap <silent> <M-F10> :<C-U>call util#adjustColor('dark', '-')<CR>

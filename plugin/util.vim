@@ -1,8 +1,8 @@
-" Vim-exterior: A vim plugin to adjust opacity, size and colorscheme.
+" Vim-util: A vim plugin to adjust opacity, size and colorscheme.
 " Author: BeyondIM <lypdarling at gmail dot com>
-" HomePage: https://github.com/BeyondIM/vim-exterior
+" HomePage: https://github.com/BeyondIM/vim-util
 " License: MIT license
-" Version: 0.1
+" Version: 0.2
 
 let s:save_cpo = &cpo
 set cpo&vim
