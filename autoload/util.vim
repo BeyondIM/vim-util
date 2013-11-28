@@ -77,7 +77,9 @@ function! s:server.saveToFile()
             let idx = index(content, line)
         endif
     endfor
-    call remove(content, idx)
+    if exists('idx')
+        call remove(content, idx)
+    endif
     call add(content, string(dic))
     call writefile(content, g:serverInfoFile)
 endfunction
@@ -119,6 +121,7 @@ function! s:server.setDarkColorForward()
     endif
     let self.bg = 'dark'
     call self.handleColor()
+    call self.echoColor()
 endfunction
 " }}}2
 
@@ -136,6 +139,7 @@ function! s:server.setDarkColorBackward()
     endif
     let self.bg = 'dark'
     call self.handleColor()
+    call self.echoColor()
 endfunction
 " }}}2
 
@@ -153,6 +157,7 @@ function! s:server.setLightColorForard()
     endif
     let self.bg = 'light'
     call self.handleColor()
+    call self.echoColor()
 endfunction
 " }}}2
 
@@ -170,6 +175,7 @@ function! s:server.setLightColorBackward()
     endif
     let self.bg = 'light'
     call self.handleColor()
+    call self.echoColor()
 endfunction
 " }}}2
 
@@ -216,6 +222,11 @@ function! s:server.handleColor()
         let s:lastLightColor = self.color
     endif
     redraw
+endfunction
+" }}}2
+
+" echo current color {{{2
+function! s:server.echoColor()
     echo 'Current color scheme: '.self.color.'('.self.bg.')'
 endfunction
 " }}}2
@@ -260,6 +271,10 @@ let g:serverList = []
 
 " util#readParams {{{2
 function! util#readParams()
+    if s:isWin && empty(glob($VIMRUNTIME.'/vimtweak.dll'))
+        call s:EchoMsg("Please put the vimtweak.dll file in the same directory as gvim.exe.", "error")
+        return
+    endif
     let server = s:server.new(v:servername)
     call s:CheckFileReadable(g:serverInfoFile)
     let content = readfile(g:serverInfoFile)
@@ -364,12 +379,9 @@ nnoremap <silent> <C-F10> :<C-U>call util#adjustColor('dark', '+')<CR>
 nnoremap <silent> <M-F10> :<C-U>call util#adjustColor('dark', '-')<CR>
 nnoremap <silent> <C-F11> :<C-U>call util#adjustColor('light', '+')<CR>
 nnoremap <silent> <M-F11> :<C-U>call util#adjustColor('light', '-')<CR>
-
-if s:isWin && !empty(glob($VIMRUNTIME.'/vimtweak.dll')) || s:isMac
-    nnoremap <silent> <C-F12> :<C-U>call util#toggleMaximize()<CR>
-    nnoremap <silent> <C-Left> :<C-U>call util#adjustOpacity('-')<CR>
-    nnoremap <silent> <C-Right> :<C-U>call util#adjustOpacity('+')<CR>
-endif
+nnoremap <silent> <C-F12> :<C-U>call util#toggleMaximize()<CR>
+nnoremap <silent> <C-Left> :<C-U>call util#adjustOpacity('-')<CR>
+nnoremap <silent> <C-Right> :<C-U>call util#adjustOpacity('+')<CR>
 
 " }}}1
 
