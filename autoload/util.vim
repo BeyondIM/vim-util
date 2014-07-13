@@ -3,10 +3,6 @@ set cpo&vim
 
 " Prepare {{{1
 
-let s:isWin = has('win32') || has('win64')
-let s:isMac = has('unix') && substitute(system('uname'), '\n', '', '') =~# 'Darwin\|Mac' 
-let s:isLinux = has('unix') && substitute(system('uname'), '\n', '', '') ==# 'Linux' 
-
 " Check file whether is readable {{{2
 function! s:CheckFileReadable(file)
     if !filereadable(a:file)
@@ -53,7 +49,7 @@ function! s:server.new(servername)
     let newServer = copy(self)
     let newServer.servername = a:servername
     let newServer.isMaximized = 0
-    let newServer.opacity = (s:isWin ? 255 : 0)
+    let newServer.opacity = (has('gui_win32') ? 255 : 0)
     let newServer.lines = 50
     let newServer.columns = 120
     let newServer.winposx = 0
@@ -87,9 +83,9 @@ endfunction
 
 " increase opacity {{{2
 function! s:server.increaseOpacity()
-    if s:isWin && self.opacity < 255
+    if has('gui_win32') && self.opacity < 255
         let self.opacity = self.opacity+5>255 ? 255 : (self.opacity+5)
-    elseif s:isMac && self.opacity > 0
+    elseif has('gui_macvim') && self.opacity > 0
         let self.opacity = self.opacity-2<0 ? 0 : (self.opacity-2)
     endif
     call self.applyParams()
@@ -98,9 +94,9 @@ endfunction
 
 " decrease opacity {{{2
 function! s:server.decreaseOpacity()
-    if s:isWin && self.opacity > 0
+    if has('gui_win32') && self.opacity > 0
         let self.opacity = self.opacity-5<0 ? 0 : (self.opacity-5)
-    elseif s:isMac && self.opacity < 100
+    elseif has('gui_macvim') && self.opacity < 100
         let self.opacity = self.opacity+2>100 ? 100 : (self.opacity+2)
     endif
     call self.applyParams()
@@ -234,25 +230,25 @@ endfunction
 " apply params {{{2
 function! s:server.applyParams()
     if self.isMaximized+0
-        if s:isWin
+        if has('gui_win32')
             call libcallnr("vimtweak.dll", "EnableMaximize", 1)
             call libcallnr("vimtweak.dll", "EnableCaption", 0)
-        elseif s:isMac
+        elseif has('gui_macvim')
             let &g:fullscreen = 1
         endif
     else
         silent! execute 'set lines=' . self.lines . ' columns=' . self.columns
         silent! execute 'winpos ' . self.winposx . ' ' .  self.winposy
-        if s:isWin
+        if has('gui_win32')
             call libcallnr("vimtweak.dll", "EnableCaption", 1)
             call libcallnr("vimtweak.dll", "EnableMaximize", 0)
-        elseif s:isMac
+        elseif has('gui_macvim')
             let &g:fullscreen = 0
         endif
     endif
-    if s:isWin
+    if has('gui_win32')
         call libcallnr("vimtweak.dll", "SetAlpha", self.opacity+0)
-    elseif s:isMac
+    elseif has('gui_macvim')
         let &g:transparency = self.opacity+0
     endif
     call self.setColor()
@@ -271,7 +267,7 @@ let g:serverList = []
 
 " util#readParams {{{2
 function! util#readParams()
-    if s:isWin && empty(glob($VIMRUNTIME.'/vimtweak.dll'))
+    if has('gui_win32') && empty(glob($VIMRUNTIME.'/vimtweak.dll'))
         call s:EchoMsg("Please put the vimtweak.dll file in the same directory as gvim.exe.", "error")
         return
     endif
