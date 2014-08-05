@@ -371,13 +371,34 @@ endfunction
 
 " Key mapping {{{1
 
-nnoremap <silent> <C-F10> :<C-U>call util#adjustColor('dark', '+')<CR>
-nnoremap <silent> <M-F10> :<C-U>call util#adjustColor('dark', '-')<CR>
-nnoremap <silent> <C-F11> :<C-U>call util#adjustColor('light', '+')<CR>
-nnoremap <silent> <M-F11> :<C-U>call util#adjustColor('light', '-')<CR>
-nnoremap <silent> <C-F12> :<C-U>call util#toggleMaximize()<CR>
-nnoremap <silent> <C-Left> :<C-U>call util#adjustOpacity('-')<CR>
-nnoremap <silent> <C-Right> :<C-U>call util#adjustOpacity('+')<CR>
+if !exists('g:adjustDarkColorForwardOpt')
+    let g:adjustDarkColorForwardOpt = '<Leader>]'
+endif
+if !exists('g:adjustDarkColorBackwardOpt')
+    let g:adjustDarkColorBackwardOpt = '<Leader>['
+endif
+if !exists('g:adjustLightColorForwardOpt')
+    let g:adjustLightColorForwardOpt = '<Leader>}'
+endif
+if !exists('g:adjustLightColorBackwardOpt')
+    let g:adjustLightColorBackwardOpt = '<Leader>{'
+endif
+if !exists('g:toggleWindowMaximizeOpt')
+    let g:toggleWindowMaximizeOpt = '<Leader><CR>'
+endif
+if !exists('g:increaseWindowOpacityOpt')
+    let g:increaseWindowOpacityOpt = '<C-Right>'
+endif
+if !exists('g:decreaseWindowOpacityOpt')
+    let g:decreaseWindowOpacityOpt = '<C-Left>'
+endif
+execute 'noremap <silent> ' . g:adjustDarkColorForwardOpt . " :<C-U>call util#adjustColor('dark', '+')<CR>"
+execute 'noremap <silent> ' . g:adjustDarkColorBackwardOpt . " :<C-U>call util#adjustColor('dark', '-')<CR>"
+execute 'noremap <silent> ' . g:adjustLightColorForwardOpt . " :<C-U>call util#adjustColor('light', '+')<CR>"
+execute 'noremap <silent> ' . g:adjustLightColorBackwardOpt . " :<C-U>call util#adjustColor('light', '-')<CR>"
+execute 'noremap <silent> ' . g:toggleWindowMaximizeOpt . " :<C-U>call util#toggleMaximize()<CR>"
+execute 'noremap <silent> ' . g:decreaseWindowOpacityOpt . " :<C-U>call util#adjustOpacity('-')<CR>"
+execute 'noremap <silent> ' . g:increaseWindowOpacityOpt . " :<C-U>call util#adjustOpacity('+')<CR>"
 
 " }}}1
 
