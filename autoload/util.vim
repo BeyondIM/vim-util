@@ -217,6 +217,7 @@ function! s:server.handleColor()
         let &background = 'light'
         let s:lastLightColor = self.color
     endif
+    let g:colors_name = self.color
     redraw
 endfunction
 " }}}2
@@ -284,6 +285,7 @@ function! util#readParams()
     for server in g:serverList
         call server.applyParams()
     endfor
+    call stl#refreshStatus()
 endfunction
 " }}}2
 
@@ -315,6 +317,7 @@ function! util#adjustColor(color, direction)
             call server.setLightColorBackward()
         endif
     endfor
+    call stl#refreshStatus()
 endfunction
 " }}}2
 
@@ -331,6 +334,7 @@ function! util#adjustOpacity(direction)
             call server.decreaseOpacity()
         endif
     endfor
+    call stl#refreshStatus()
 endfunction
 " }}}2
 
@@ -352,6 +356,7 @@ function! util#toggleMaximize()
         endif
         call server.applyParams()
     endfor
+    call stl#refreshStatus()
 endfunction
 " }}}2
 
@@ -364,6 +369,7 @@ function! util#adjustSize()
         let server.winposy = (getwinposy()<0 ? 0 : getwinposy())
         call server.applyParams()
     endfor
+    call stl#refreshStatus()
 endfunction
 " }}}2
 

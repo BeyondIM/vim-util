@@ -8,9 +8,13 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 " auto command {{{1
-autocmd VimEnter * call util#readParams()
-autocmd VimLeavePre * call util#writeParams()
-autocmd VimResized * call util#adjustSize()
+augroup util
+    autocmd!
+    autocmd VimEnter * call util#readParams()
+    autocmd VimLeavePre * call util#writeParams()
+    autocmd VimResized * call util#adjustSize()
+    autocmd VimEnter,WinEnter,BufWinEnter * call stl#refreshStatus()
+augroup END
 " }}}1
 
 let &cpo = s:save_cpo
