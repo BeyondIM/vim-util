@@ -238,8 +238,10 @@ function! s:server.applyParams()
             let &g:fullscreen = 1
         endif
     else
-        silent! execute 'set lines=' . self.lines . ' columns=' . self.columns
-        silent! execute 'winpos ' . self.winposx . ' ' .  self.winposy
+        if self.servername != 'Terminal'
+            silent! execute 'set lines=' . self.lines . ' columns=' . self.columns
+            silent! execute 'winpos ' . self.winposx . ' ' .  self.winposy
+        endif
         if has('gui_win32')
             call libcallnr("vimtweak.dll", "EnableCaption", 1)
             call libcallnr("vimtweak.dll", "EnableMaximize", 0)
@@ -272,11 +274,16 @@ function! util#readParams()
         call s:EchoMsg("Please put the vimtweak.dll file in the same directory as gvim.exe.", "error")
         return
     endif
-    let server = s:server.new(v:servername)
+    if empty(v:servername)
+        let servername = 'Terminal'
+    else
+        let servername = v:servername
+    endif
+    let server = s:server.new(servername)
     call s:CheckFileReadable(g:serverInfoFile)
     let content = readfile(g:serverInfoFile)
     for line in content
-        if eval(line)['servername'] == v:servername
+        if eval(line)['servername'] == servername
             let server = extend(server, eval(line), 'force')        
             break
         endif
