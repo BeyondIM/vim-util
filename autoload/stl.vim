@@ -21,7 +21,7 @@ function! s:RefreshCurStatus(active, ...)
     highlight Percent   ctermfg=16  guifg=#000000 ctermbg=246 guibg=#949494
     highlight Position  ctermfg=16  guifg=#000000 ctermbg=251 guibg=#c6c6c6
     " color for plugins
-    highlight Syntastic ctermfg=255 guifg=#eeeeee ctermbg=166 guibg=#d75f00
+    highlight ALE ctermfg=255 guifg=#eeeeee ctermbg=166 guibg=#d75f00
     let wnum = a:0 ? a:1 : 0 
     call setwinvar(wnum, '&statusline', '%!Status(' . a:active . ',' . wnum . ')')
 endfunction
@@ -57,8 +57,8 @@ function! Status(active, wnum)
         let stat .= !empty(ro_mod) ? s:Color(a:active, 'RoMod', ' '.ro_mod.' ') : ''
 
         let stat .= '%='
-        " syntastic
-        let stat .= exists(':SyntasticCheck') ? s:Color(a:active, 'Syntastic', '%( %{SyntasticStatuslineFlag()} %)') : ''
+        " ale
+        let stat .= exists(':ALENext') ? s:Color(a:active, 'ALE', '%( %{ale#statusline#Status()} %)') : ''
         " fileformat and fileencoding
         let ff_fenc = (fenc != 'utf-8' && !empty(fenc)) ? (ff != 'unix' ? fenc.', '.ff : fenc) : (ff != 'unix' ? ff : '') 
         let stat .= !empty(ff_fenc) ? s:Color(a:active, 'FfFenc', ' '.ff_fenc.' ') : ''
